@@ -15,6 +15,9 @@ Via testing, this package may not suitable for Matlab version less than R2020a (
 - 'tvpvar_m.pdf' is the handbook of this packages (Strongly recommended Users to read it before programing).
 - 'TVPVAR-Package.m' is another instruction of this Package.
 - Other scripts are not important if you just want to use this package.
+- 'export_results_images.m' can export generated xlsx outputs (vol/a/ai/int/imp) to PNG images.
+- 'tvpvar_ex1.m' and 'tvpvar_ex2.m' now call the exporter at the end and write images into folder 'tvpvar_images'.
+- They also export all open figures as 'allfig_01.png', 'allfig_02.png', ... in 'tvpvar_images'.
 - GOOD LUCK TO U!
 
 ## 0x02 Reference
