@@ -119,14 +119,21 @@ imp = arr(:,3:end);
 
 vT = unique(t(~isnan(t)));
 vH = unique(h(~isnan(h)));
+vH = sort(vH(:)');
 
-if isempty(vT) || isempty(vH)
-    fprintf('[skip] %s does not contain valid t/horizon columns.\n', xlsxFile);
+if isempty(vH)
+    fprintf('[skip] %s does not contain valid horizon column.\n', xlsxFile);
     return;
 end
 
-ns = length(vT);
+nrow = size(imp, 1);
 nh = length(vH);
+if mod(nrow, nh) ~= 0
+    fprintf('[skip] %s has inconsistent impulse row size for reshape.\n', xlsxFile);
+    return;
+end
+ns = nrow / nh;
+
 npair = size(imp,2);
 nk = round(sqrt(npair));
 if nk^2 ~= npair
@@ -134,13 +141,28 @@ if nk^2 ~= npair
     return;
 end
 
+% Determine representative time index robustly:
+% t is only filled at the first row of each time block in mcmc output.
+tBlock = t(1:nh:end);
+validBlock = find(~isnan(tBlock));
+if isempty(validBlock)
+    midx = round(ns/2);
+    tLabel = midx;
+else
+    midPos = round(length(validBlock)/2);
+    midx = validBlock(midPos);
+    tLabel = tBlock(midx);
+end
+if isempty(validBlock) && ~isempty(vT)
+    tLabel = vT(max(1, min(round(length(vT)/2), length(vT))));
+end
+
 % Reshape: each column is stacked [horizon x t]
-midx = round(ns/2); % representative middle time slice
 fig = figure('Visible','off', 'Color', 'w');
 tiledlayout(nk, nk, 'TileSpacing', 'compact', 'Padding', 'compact');
 
 for col = 1:npair
-    mat = reshape(imp(:,col), nh, ns)';
+    mat = reshape(imp(:,col), nh, [])';
     curve = mat(midx,:);
 
     nexttile;
@@ -151,7 +173,7 @@ for col = 1:npair
     grid on;
 end
 
-sgtitle(sprintf('Impulse responses at t=%d', vT(midx)));
+sgtitle(sprintf('Impulse responses at t=%g', tLabel));
 outpath = fullfile(outdir, 'impulse_midtime.png');
 exportgraphics(fig, outpath, 'Resolution', 180);
 close(fig);
