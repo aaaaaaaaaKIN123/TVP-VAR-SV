@@ -21,7 +21,16 @@ ns = m_ns;
 nk = m_nk; 
 nl = m_nl; 
 
-mimpr = readtable('tvpvar_imp.xlsx');
+fimp = 'tvpvar_imp.xlsx';
+if exist(fimp, 'file') ~= 2
+  fimp = fullfile('tvpvar_output', 'excel', 'tvpvar_imp.xlsx');
+end
+if exist(fimp, 'file') ~= 2
+  error('drawimp:MissingImpulseFile', ...
+        'Unable to find impulse file: %s', fimp);
+end
+
+mimpr = readtable(fimp);
 mimpr = table2array(mimpr);
 mimpm = mimpr(3:end, 3:end);
 
