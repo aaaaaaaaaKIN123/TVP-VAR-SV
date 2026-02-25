@@ -15,6 +15,9 @@ Via testing, this package may not suitable for Matlab version less than R2020a (
 - 'tvpvar_m.pdf' is the handbook of this packages (Strongly recommended Users to read it before programing).
 - 'TVPVAR-Package.m' is another instruction of this Package.
 - Other scripts are not important if you just want to use this package.
+- MCMC Excel outputs are now saved in folder 'tvpvar_output/excel'.
+- 'export_results_images.m' exports those xlsx outputs (vol/a/ai/int/imp) to PNG images in folder 'tvpvar_output/images'.
+- 'tvpvar_ex1.m' and 'tvpvar_ex2.m' now call only this exporter at the end (no open-figure batch export).
 - GOOD LUCK TO U!
 
 ## 0x02 Reference
