@@ -117,6 +117,7 @@ t = arr(:,1);
 h = arr(:,2);
 imp = arr(:,3:end);
 
+vT = unique(t(~isnan(t)));
 vH = unique(h(~isnan(h)));
 vH = sort(vH(:)');
 
@@ -152,13 +153,16 @@ else
     midx = validBlock(midPos);
     tLabel = tBlock(midx);
 end
+if isempty(validBlock) && ~isempty(vT)
+    tLabel = vT(max(1, min(round(length(vT)/2), length(vT))));
+end
 
 % Reshape: each column is stacked [horizon x t]
 fig = figure('Visible','off', 'Color', 'w');
 tiledlayout(nk, nk, 'TileSpacing', 'compact', 'Padding', 'compact');
 
 for col = 1:npair
-    mat = reshape(imp(:,col), nh, [] )';
+    mat = reshape(imp(:,col), nh, [])';
     curve = mat(midx,:);
 
     nexttile;
