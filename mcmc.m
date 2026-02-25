@@ -338,6 +338,11 @@ end
 
 %% draw h %%
 
+axlsdir = fullfile('tvpvar_output', 'excel');
+if ~exist(axlsdir, 'dir')
+  mkdir(axlsdir);
+end
+
 msamph = msamph / nsim;   % posterior mean
 msamphs = sqrt(msamphs/nsim - msamph.^2);
                           % posterior standard deviation  
@@ -383,11 +388,12 @@ end
 mout = [msamph msamphs];
 mout(1:nl, :) = NaN(nl, nk*2);
 
-if isequal(exist('tvpvar_vol.xlsx', 'file'), 2)
-  delete('tvpvar_vol.xlsx');
+fvol = fullfile(axlsdir, 'tvpvar_vol.xlsx');
+if isequal(exist(fvol, 'file'), 2)
+  delete(fvol);
 end
-writecell(asl, 'tvpvar_vol.xlsx', 'Sheet', 1, 'Range', 'A1');
-writematrix([(1:ns)', mout], 'tvpvar_vol.xlsx', 'Sheet', 1, 'Range', 'A3');
+writecell(asl, fvol, 'Sheet', 1, 'Range', 'A1');
+writematrix([(1:ns)', mout], fvol, 'Sheet', 1, 'Range', 'A3');
 
 %% draw a %%
 
@@ -417,11 +423,12 @@ end
 mout = [msampa msampas];
 mout(1:nl, :) = NaN(nl, na*2);
 
-if isequal(exist('tvpvar_a.xlsx', 'file'), 2)
-  delete('tvpvar_a.xlsx');
+fa = fullfile(axlsdir, 'tvpvar_a.xlsx');
+if isequal(exist(fa, 'file'), 2)
+  delete(fa);
 end
-writecell(asm, 'tvpvar_a.xlsx', 'Sheet', 1, 'Range', 'A1');
-writematrix([(1:ns)', mout], 'tvpvar_a.xlsx', 'Sheet', 1, 'Range', 'A3');
+writecell(asm, fa, 'Sheet', 1, 'Range', 'A1');
+writematrix([(1:ns)', mout], fa, 'Sheet', 1, 'Range', 'A3');
 
 %% draw a-inverse %%
 
@@ -461,11 +468,12 @@ end
 mout = [msampai msampais];
 mout(1:nl, :) = NaN(nl, na*2);
 
-if isequal(exist('tvpvar_ai.xlsx', 'file'), 2)
-  delete('tvpvar_ai.xlsx');
+fai = fullfile(axlsdir, 'tvpvar_ai.xlsx');
+if isequal(exist(fai, 'file'), 2)
+  delete(fai);
 end
-writecell(asm, 'tvpvar_ai.xlsx', 'Sheet', 1, 'Range', 'A1');
-writematrix([(1:ns)', mout], 'tvpvar_ai.xlsx', 'Sheet', 1, 'Range', 'A3');
+writecell(asm, fai, 'Sheet', 1, 'Range', 'A1');
+writematrix([(1:ns)', mout], fai, 'Sheet', 1, 'Range', 'A3');
 
 if m_fli == 1
     
@@ -500,11 +508,12 @@ if m_fli == 1
   mout = [msampi msampis];
   mout(1:nl, :) = NaN(nl, nk*2);
   
-  if isequal(exist('tvpvar_int.xlsx', 'file'), 2)
-    delete('tvpvar_int.xlsx');
+  fint = fullfile(axlsdir, 'tvpvar_int.xlsx');
+  if isequal(exist(fint, 'file'), 2)
+    delete(fint);
   end
-  writecell(asl, 'tvpvar_int.xlsx', 'Sheet', 1, 'Range', 'A1');
-  writematrix([(1:ns)', mout], 'tvpvar_int.xlsx', 'Sheet', 1, 'Range', 'A3');
+  writecell(asl, fint, 'Sheet', 1, 'Range', 'A1');
+  writematrix([(1:ns)', mout], fint, 'Sheet', 1, 'Range', 'A3');
 end
 
 %% save impulse response %%
@@ -533,14 +542,16 @@ for j = 1 : nk
 end
 end
 
-if isequal(exist('tvpvar_imp.xlsx', 'file'), 2)
-  delete('tvpvar_imp.xlsx');
+fimp = fullfile(axlsdir, 'tvpvar_imp.xlsx');
+if isequal(exist(fimp, 'file'), 2)
+  delete(fimp);
 end
 
-writecell(asl, 'tvpvar_imp.xlsx', 'Sheet', 1, 'Range', 'A1');
-writematrix([mout, mimpm], 'tvpvar_imp.xlsx', 'Sheet', 1, 'Range', 'A4');
+writecell(asl, fimp, 'Sheet', 1, 'Range', 'A1');
+writematrix([mout, mimpm], fimp, 'Sheet', 1, 'Range', 'A4');
 
-fprintf('\n\nRanseed: %i', m_iseed);
+fprintf('\n\nExcel output dir: %s', axlsdir);
+fprintf('\nRanseed: %i', m_iseed);
 fprintf('\nTime: %.2f', toc);
 fprintf('\n\n')
 
