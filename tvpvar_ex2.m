@@ -38,5 +38,4 @@ drawimp([1 6 12], 1);		% draw impulse reponse(1)
 drawimp([40 70 100], 0);	% draw impulse response(2)
                             % : response at t=40,70,100
 
-export_results_images('tvpvar_images');  % export xlsx-derived summaries to PNG images
-export_open_figures('tvpvar_images', 'allfig');  % export every open figure to PNG images
+export_results_images();  % export xlsx-derived summaries to PNG images

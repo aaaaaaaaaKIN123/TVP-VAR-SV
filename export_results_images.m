@@ -2,13 +2,15 @@
 %%                    TVP-VAR package                     %%
 %%--------------------------------------------------------%%
 %%
-%%  files = export_results_images(outdir)
+%%  files = export_results_images(imgdir, xlsdir)
 %%
 %%  Export TVP-VAR result Excel files to PNG images.
 %%
 %%  [input]
-%%    outdir: output directory for images (optional)
-%%            default: 'tvpvar_images'
+%%    imgdir: output directory for images (optional)
+%%            default: 'tvpvar_output/images'
+%%    xlsdir: directory of Excel outputs from mcmc.m (optional)
+%%            default: 'tvpvar_output/excel'
 %%
 %%  [output]
 %%    files: struct of generated image paths
@@ -21,25 +23,30 @@
 %%    - tvpvar_imp.xlsx
 %%
 
-function files = export_results_images(outdir)
+function files = export_results_images(imgdir, xlsdir)
 
-if nargin < 1 || isempty(outdir)
-    outdir = 'tvpvar_images';
+if nargin < 1 || isempty(imgdir)
+    imgdir = fullfile('tvpvar_output', 'images');
+end
+if nargin < 2 || isempty(xlsdir)
+    xlsdir = fullfile('tvpvar_output', 'excel');
 end
 
-if ~exist(outdir, 'dir')
-    mkdir(outdir);
+if ~exist(imgdir, 'dir')
+    mkdir(imgdir);
 end
 
 files = struct('vol', '', 'a', '', 'ai', '', 'int', '', 'imp', '');
 
-files.vol = export_posterior_bands('tvpvar_vol.xlsx', outdir, 'volatility');
-files.a   = export_posterior_bands('tvpvar_a.xlsx', outdir, 'a_t');
-files.ai  = export_posterior_bands('tvpvar_ai.xlsx', outdir, 'a_inverse_t');
-files.int = export_posterior_bands('tvpvar_int.xlsx', outdir, 'intercept_t');
-files.imp = export_impulse_grid('tvpvar_imp.xlsx', outdir);
+files.vol = export_posterior_bands(fullfile(xlsdir, 'tvpvar_vol.xlsx'), imgdir, 'volatility');
+files.a   = export_posterior_bands(fullfile(xlsdir, 'tvpvar_a.xlsx'), imgdir, 'a_t');
+files.ai  = export_posterior_bands(fullfile(xlsdir, 'tvpvar_ai.xlsx'), imgdir, 'a_inverse_t');
+files.int = export_posterior_bands(fullfile(xlsdir, 'tvpvar_int.xlsx'), imgdir, 'intercept_t');
+files.imp = export_impulse_grid(fullfile(xlsdir, 'tvpvar_imp.xlsx'), imgdir);
 
-fprintf('\n[export_results_images] Done.\n');
+fprintf('\n[export_results_images] xlsdir: %s\n', xlsdir);
+fprintf('[export_results_images] imgdir: %s\n', imgdir);
+fprintf('[export_results_images] Done.\n');
 end
 
 function outpath = export_posterior_bands(xlsxFile, outdir, tag)
