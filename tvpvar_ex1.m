@@ -28,10 +28,32 @@ setvar('fastimp', 1);       % fast computing of response
 
 mcmc(1000);                % MCMC
 
-drawimp([4 8 12], 1);       % draw impulse reponse(1)
-                            % : 4-,8-,12-period ahead
-                            
-drawimp([30 60 90], 0);		% draw impulse response(2)
-                            % : response at t=30,60,90
+run_tag = datestr(now, 'yyyymmdd_HHMMSS');
+run_dir = fullfile('tvpvar_output', ['run_' run_tag]);
+run_img_dir = fullfile(run_dir, 'images');
+run_excel_dir = fullfile(run_dir, 'excel');
+if ~exist(run_excel_dir, 'dir')
+    mkdir(run_excel_dir);
+end
 
-export_results_images();  % export xlsx-derived summaries to PNG images
+% snapshot mcmc excel outputs for this run
+src_excel_dir = fullfile('tvpvar_output', 'excel');
+excel_files = {'tvpvar_vol.xlsx', 'tvpvar_a.xlsx', 'tvpvar_ai.xlsx', ...
+               'tvpvar_int.xlsx', 'tvpvar_imp.xlsx'};
+for i = 1:numel(excel_files)
+    src = fullfile(src_excel_dir, excel_files{i});
+    if exist(src, 'file') == 2
+        copyfile(src, fullfile(run_excel_dir, excel_files{i}));
+    end
+end
+
+imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir);
+
+drawimp([4 8 12], 1, imp_opts); % draw impulse response(1)
+                             % : 4-,8-,12-period ahead
+
+drawimp([30 60 90], 0, imp_opts); % draw impulse response(2)
+                                  % : response at t=30,60,90
+
+export_results_images(fullfile(run_img_dir, 'summary'), run_excel_dir);
+fprintf('\n[tvpvar_ex1] run_dir: %s\n', run_dir);
