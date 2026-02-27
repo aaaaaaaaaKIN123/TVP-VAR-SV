@@ -24,6 +24,7 @@ global m_ns m_nk m_nl m_asvar;
 ns = m_ns;
 nk = m_nk;
 nl = m_nl;
+exportRes = 600;
 
 if nargin < 3 || isempty(opts)
   opts = struct();
@@ -56,7 +57,8 @@ mline = [0 .5 0; 0 0 1; 1 0 0; 0 .7 .7];
 vline = {':', '--', '-', '-.'};
 nline = size(vt, 2);
 
-fig = figure;
+figPos = get_maximized_position();
+fig = figure('Color', 'w', 'Units', 'pixels', 'Position', figPos);
 ax = gobjects(nk * nk, 1);
 for i = 1 : nk
   for j = 1 : nk
@@ -68,7 +70,7 @@ for i = 1 : nk
 
       for k = 1 : nline
         plot(mimp(:, vt(k)+1), char(vline(k)), ...
-             'Color', mline(k, :))
+             'Color', mline(k, :), 'LineWidth', 1.2)
         hold on
       end
       vax = axis;
@@ -81,14 +83,14 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; '-period      ']; %#ok<AGROW>
         end
-        legend([num2str(vt') vlege])
+        legend([num2str(vt') vlege], 'Location', 'best')
       end
 
     else
 
       for k = 1 : nline
         plot(0:nimp-1, mimp(vt(k), :), char(vline(k)), ...
-             'Color', mline(k, :))
+             'Color', mline(k, :), 'LineWidth', 1.2)
         hold on
       end
       vax = axis;
@@ -101,12 +103,13 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; 't=']; %#ok<AGROW>
         end
-        legend([vlege num2str(vt')])
+        legend([vlege num2str(vt')], 'Location', 'best')
       end
 
     end
 
     hold off
+    grid on
     title(['$\varepsilon_{', char(m_asvar(i)), ...
            '}\uparrow\ \rightarrow\ ', ...
            char(m_asvar(j)), '$'], 'interpreter', 'latex')
@@ -136,7 +139,7 @@ if opts.save_full || opts.save_panels
 
   if opts.save_full
     exportgraphics(fig, fullfile(fullDir, [prefix '_full.png']), ...
-                   'Resolution', 180);
+                   'Resolution', exportRes);
   end
 
   if opts.save_panels
@@ -145,7 +148,20 @@ if opts.save_full || opts.save_panels
       j = mod(id-1, nk) + 1;
       panelPath = fullfile(panelDir, ...
         sprintf('%s_shock%d_resp%d.png', prefix, i, j));
-      exportgraphics(ax(id), panelPath, 'Resolution', 180);
+      exportgraphics(ax(id), panelPath, 'Resolution', exportRes);
     end
   end
+end
+end
+
+function figPos = get_maximized_position()
+figPos = [1 1 1920 1080];
+try
+  scr = get(groot, 'ScreenSize');
+  if numel(scr) == 4 && all(isfinite(scr)) && scr(3) > 200 && scr(4) > 200
+    figPos = [1 1 floor(scr(3)) floor(scr(4))];
+  end
+catch
+  % keep fallback
+end
 end
