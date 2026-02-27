@@ -77,7 +77,8 @@ nvar = ncol / 2;
 nr = ceil(sqrt(nvar));
 nc = ceil(nvar / nr);
 
-fig = figure('Visible','off', 'Color', 'w');
+fig = figure('Visible','off', 'Color', 'w', 'Units', 'pixels', ...
+    'Position', get_maximized_position());
 tiledlayout(nr, nc, 'TileSpacing', 'compact', 'Padding', 'compact');
 
 for i = 1:nvar
@@ -96,7 +97,7 @@ for i = 1:nvar
 end
 
 outpath = fullfile(outdir, sprintf('%s.png', tag));
-exportgraphics(fig, outpath, 'Resolution', 180);
+exportgraphics(fig, outpath, 'Resolution', 600);
 close(fig);
 fprintf('[ok] %s -> %s\n', xlsxFile, outpath);
 end
@@ -165,7 +166,8 @@ if isempty(validBlock) && ~isempty(vT)
 end
 
 % Reshape: each column is stacked [horizon x t]
-fig = figure('Visible','off', 'Color', 'w');
+fig = figure('Visible','off', 'Color', 'w', 'Units', 'pixels', ...
+    'Position', get_maximized_position());
 tiledlayout(nk, nk, 'TileSpacing', 'compact', 'Padding', 'compact');
 
 for col = 1:npair
@@ -182,8 +184,20 @@ end
 
 sgtitle(sprintf('Impulse responses at t=%g', tLabel));
 outpath = fullfile(outdir, 'impulse_midtime.png');
-exportgraphics(fig, outpath, 'Resolution', 180);
+exportgraphics(fig, outpath, 'Resolution', 600);
 close(fig);
 
 fprintf('[ok] %s -> %s\n', xlsxFile, outpath);
+end
+
+function figPos = get_maximized_position()
+figPos = [1 1 1920 1080];
+try
+    scr = get(groot, 'ScreenSize');
+    if numel(scr) == 4 && all(isfinite(scr)) && scr(3) > 200 && scr(4) > 200
+        figPos = [1 1 floor(scr(3)) floor(scr(4))];
+    end
+catch
+    % keep fallback
+end
 end

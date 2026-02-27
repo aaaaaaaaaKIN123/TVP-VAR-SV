@@ -16,8 +16,10 @@ Via testing, this package may not suitable for Matlab version less than R2020a (
 - 'TVPVAR-Package.m' is another instruction of this Package.
 - Other scripts are not important if you just want to use this package.
 - MCMC Excel outputs are now saved in folder 'tvpvar_output/excel'.
-- 'export_results_images.m' exports those xlsx outputs (vol/a/ai/int/imp) to PNG images in folder 'tvpvar_output/images'.
-- 'tvpvar_ex1.m' and 'tvpvar_ex2.m' now call only this exporter at the end (no open-figure batch export).
+- 'tvpvar_ex1.m' now creates a run folder under 'tvpvar_output/run_YYYYMMDD_HHMMSS/'.
+- Each run folder stores a snapshot of Excel outputs in '.../excel'.
+- Impulse-response figures are exported into '.../images/figure_full' and '.../images/figure_panels'.
+- 'export_results_images.m' exports xlsx summaries (vol/a/ai/int/imp) to '.../images/summary'.
 - GOOD LUCK TO U!
 
 ## 0x02 Reference
