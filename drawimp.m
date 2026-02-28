@@ -45,19 +45,6 @@ end
 if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
   opts.vt_labels = vt;
 end
-
-if isnumeric(opts.vt_labels)
-  vtLabelCell = cellstr(num2str(opts.vt_labels(:)));
-elseif ischar(opts.vt_labels)
-  vtLabelCell = cellstr(opts.vt_labels);
-elseif isstring(opts.vt_labels)
-  vtLabelCell = cellstr(opts.vt_labels(:));
-elseif iscell(opts.vt_labels)
-  vtLabelCell = opts.vt_labels(:);
-else
-  error('drawimp:InvalidLabelType', ...
-        'opts.vt_labels must be numeric, string, char, or cell array.');
-end
 if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
   opts.vt_labels = vt;
 end

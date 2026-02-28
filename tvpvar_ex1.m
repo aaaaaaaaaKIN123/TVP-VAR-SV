@@ -43,5 +43,15 @@ imp_opts.vt_labels = [1 2 3];
 drawimp([30 60 90], 0, imp_opts); % draw impulse response(2)
                                   % : response at t=30,60,90 (legend label: 1,2,3 on all panels)
 
+
+imp3d_opts = struct('outdir', fullfile(out_root, 'image', 'figure_3d'), ...
+                    'save_full', 1, 'save_panels', 1, ...
+                    'layout_mode', 'auto', 'view_az', -125, ...
+                    'view_el', 24, 'axes_font_size', 10, ...
+                    'title_font_size', 12);
+% If you want year labels on the time axis, set:
+% imp3d_opts.time_labels = 2011:2023; % (length must equal ns)
+drawimp3d([1 1; 1 2; 2 1; 3 3], imp3d_opts);
+
 export_results_images(fullfile(run_img_dir, 'summary'), src_excel_dir);
 fprintf('\n[tvpvar_ex1] output dirs: %s | %s\n', src_excel_dir, run_img_dir);
