@@ -16,6 +16,9 @@
 %%     .save_panels : export each subplot panel (default 0)
 %%     .outdir      : output root dir for exported images
 %%     .vt_labels   : custom labels for values in vt (default = vt)
+%%     .axes_font_size   : axis tick font size
+%%     .legend_font_size : legend font size
+%%     .title_font_size  : subplot title font size
 %%
 
 function [] = drawimp(vt, fldraw, opts)
@@ -41,6 +44,15 @@ if ~isfield(opts, 'outdir') || isempty(opts.outdir)
 end
 if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
   opts.vt_labels = vt;
+end
+if ~isfield(opts, 'axes_font_size') || isempty(opts.axes_font_size)
+  opts.axes_font_size = 12;
+end
+if ~isfield(opts, 'legend_font_size') || isempty(opts.legend_font_size)
+  opts.legend_font_size = opts.axes_font_size;
+end
+if ~isfield(opts, 'title_font_size') || isempty(opts.title_font_size)
+  opts.title_font_size = opts.axes_font_size + 1;
 end
 
 if isnumeric(opts.vt_labels)
@@ -89,6 +101,7 @@ for i = 1 : nk
     id = (i-1)*nk + j;
     mimp = reshape(mimpm(:, id), nimp, ns)';
     ax(id) = subplot(nk, nk, id);
+    set(ax(id), 'FontSize', opts.axes_font_size);
 
     if fldraw == 1
 
@@ -106,7 +119,8 @@ for i = 1 : nk
       for l = 2 : nline
         vlege = [vlege; '-period      ']; %#ok<AGROW>
       end
-      legend([legendLabelMatrix vlege], 'Location', 'best')
+      hLeg = legend([legendLabelMatrix vlege], 'Location', 'best');
+      set(hLeg, 'FontSize', opts.legend_font_size);
 
     else
 
@@ -124,7 +138,8 @@ for i = 1 : nk
       for l = 2 : nline
         vlege = [vlege; 't=']; %#ok<AGROW>
       end
-      legend([vlege legendLabelMatrix], 'Location', 'best')
+      hLeg = legend([vlege legendLabelMatrix], 'Location', 'best');
+      set(hLeg, 'FontSize', opts.legend_font_size);
 
     end
 
@@ -132,7 +147,8 @@ for i = 1 : nk
     grid on
     title(['$\varepsilon_{', char(m_asvar(i)), ...
            '}\uparrow\ \rightarrow\ ', ...
-           char(m_asvar(j)), '$'], 'interpreter', 'latex')
+           char(m_asvar(j)), '$'], 'interpreter', 'latex', ...
+           'FontSize', opts.title_font_size)
 
   end
 end

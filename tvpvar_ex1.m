@@ -47,7 +47,9 @@ for i = 1:numel(excel_files)
     end
 end
 
-imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir);
+imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir, ...
+                  'axes_font_size', 11, 'legend_font_size', 11, ...
+                  'title_font_size', 14);
 
 drawimp([4 8 12], 1, imp_opts); % draw impulse response(1)
                              % : 4-,8-,12-period ahead (legend shown on all panels)
