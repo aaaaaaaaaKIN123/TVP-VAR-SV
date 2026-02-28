@@ -40,7 +40,10 @@ if ~isfield(opts, 'save_panels')
   opts.save_panels = 0;
 end
 if ~isfield(opts, 'outdir') || isempty(opts.outdir)
-  opts.outdir = fullfile('tvpvar_output', 'images');
+  opts.outdir = fullfile('tvpvar_output', 'image');
+end
+if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
+  opts.vt_labels = vt;
 end
 if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
   opts.vt_labels = vt;
