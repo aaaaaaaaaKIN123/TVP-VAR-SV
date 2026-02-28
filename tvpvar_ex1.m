@@ -50,11 +50,11 @@ end
 imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir);
 
 drawimp([4 8 12], 1, imp_opts); % draw impulse response(1)
-                             % : 4-,8-,12-period ahead
+                             % : 4-,8-,12-period ahead (shown on all panels)
 
 imp_opts.vt_labels = [1 2 3];
 drawimp([30 60 90], 0, imp_opts); % draw impulse response(2)
-                                  % : response at t=30,60,90 (legend label: 1,2,3)
+                                  % : response at t=30,60,90 (legend label: 1,2,3, shown on all panels)
 
 export_results_images(fullfile(run_img_dir, 'summary'), run_excel_dir);
 fprintf('\n[tvpvar_ex1] run_dir: %s\n', run_dir);
