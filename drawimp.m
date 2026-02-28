@@ -15,6 +15,7 @@
 %%     .save_full   : export full impulse figure (default 0)
 %%     .save_panels : export each subplot panel (default 0)
 %%     .outdir      : output root dir for exported images
+%%     .vt_labels   : custom labels for values in vt (default = vt)
 %%
 
 function [] = drawimp(vt, fldraw, opts)
@@ -38,6 +39,29 @@ end
 if ~isfield(opts, 'outdir') || isempty(opts.outdir)
   opts.outdir = fullfile('tvpvar_output', 'images');
 end
+if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
+  opts.vt_labels = vt;
+end
+
+if isnumeric(opts.vt_labels)
+  vtLabelCell = cellstr(num2str(opts.vt_labels(:)));
+elseif ischar(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels);
+elseif isstring(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels(:));
+elseif iscell(opts.vt_labels)
+  vtLabelCell = opts.vt_labels(:);
+else
+  error('drawimp:InvalidLabelType', ...
+        'opts.vt_labels must be numeric, string, char, or cell array.');
+end
+
+if numel(vtLabelCell) ~= numel(vt)
+  error('drawimp:InvalidLabelLength', ...
+        'opts.vt_labels must have the same length as vt.');
+end
+vtLabelCell = cellfun(@(x) char(string(x)), vtLabelCell, 'UniformOutput', false);
+legendLabelMatrix = char(vtLabelCell);
 
 fimp = 'tvpvar_imp.xlsx';
 if exist(fimp, 'file') ~= 2
@@ -83,7 +107,7 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; '-period      ']; %#ok<AGROW>
         end
-        legend([num2str(vt') vlege], 'Location', 'best')
+        legend([legendLabelMatrix vlege], 'Location', 'best')
       end
 
     else
@@ -103,7 +127,7 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; 't=']; %#ok<AGROW>
         end
-        legend([vlege num2str(vt')], 'Location', 'best')
+        legend([vlege legendLabelMatrix], 'Location', 'best')
       end
 
     end
