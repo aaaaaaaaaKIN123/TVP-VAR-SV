@@ -28,32 +28,30 @@ setvar('fastimp', 1);       % fast computing of response
 
 mcmc(1000);                % MCMC
 
-run_tag = datestr(now, 'yyyymmdd_HHMMSS');
-run_dir = fullfile('tvpvar_output', ['run_' run_tag]);
-run_img_dir = fullfile(run_dir, 'images');
-run_excel_dir = fullfile(run_dir, 'excel');
-if ~exist(run_excel_dir, 'dir')
-    mkdir(run_excel_dir);
-end
+out_root = 'tvpvar_output';
+run_img_dir = fullfile(out_root, 'image');
+src_excel_dir = fullfile(out_root, 'excel');
 
-% snapshot mcmc excel outputs for this run
-src_excel_dir = fullfile('tvpvar_output', 'excel');
-excel_files = {'tvpvar_vol.xlsx', 'tvpvar_a.xlsx', 'tvpvar_ai.xlsx', ...
-               'tvpvar_int.xlsx', 'tvpvar_imp.xlsx'};
-for i = 1:numel(excel_files)
-    src = fullfile(src_excel_dir, excel_files{i});
-    if exist(src, 'file') == 2
-        copyfile(src, fullfile(run_excel_dir, excel_files{i}));
-    end
-end
-
-imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir);
+imp_opts = struct('save_full', 1, 'save_panels', 1, 'outdir', run_img_dir, ...
+                  'axes_font_size', 11, 'legend_font_size', 11, ...
+                  'title_font_size', 14);
 
 drawimp([4 8 12], 1, imp_opts); % draw impulse response(1)
-                             % : 4-,8-,12-period ahead
+                             % : 4-,8-,12-period ahead (legend shown on all panels)
 
+imp_opts.vt_labels = [1 2 3];
 drawimp([30 60 90], 0, imp_opts); % draw impulse response(2)
-                                  % : response at t=30,60,90
+                                  % : response at t=30,60,90 (legend label: 1,2,3 on all panels)
 
-export_results_images(fullfile(run_img_dir, 'summary'), run_excel_dir);
-fprintf('\n[tvpvar_ex1] run_dir: %s\n', run_dir);
+
+imp3d_opts = struct('outdir', fullfile(out_root, 'image', 'figure_3d'), ...
+                    'save_full', 1, 'save_panels', 1, ...
+                    'layout_mode', 'auto', 'view_az', -125, ...
+                    'view_el', 24, 'axes_font_size', 10, ...
+                    'title_font_size', 12);
+% If you want year labels on the time axis, set:
+% imp3d_opts.time_labels = 2011:2023; % (length must equal ns)
+drawimp3d([1 1; 1 2; 2 1; 3 3], imp3d_opts);
+
+export_results_images(fullfile(run_img_dir, 'summary'), src_excel_dir);
+fprintf('\n[tvpvar_ex1] output dirs: %s | %s\n', src_excel_dir, run_img_dir);
