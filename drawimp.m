@@ -15,6 +15,7 @@
 %%     .save_full   : export full impulse figure (default 0)
 %%     .save_panels : export each subplot panel (default 0)
 %%     .outdir      : output root dir for exported images
+%%     .vt_labels   : custom labels for values in vt (default = vt)
 %%
 
 function [] = drawimp(vt, fldraw, opts)
@@ -38,7 +39,30 @@ end
 if ~isfield(opts, 'outdir') || isempty(opts.outdir)
   opts.outdir = fullfile('tvpvar_output', 'images');
 end
+if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
+  opts.vt_labels = vt;
+end
 
+if isnumeric(opts.vt_labels)
+  vtLabelCell = cellstr(num2str(opts.vt_labels(:)));
+elseif ischar(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels);
+elseif isstring(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels(:));
+elseif iscell(opts.vt_labels)
+  vtLabelCell = opts.vt_labels(:);
+else
+  error('drawimp:InvalidLabelType', ...
+        'opts.vt_labels must be numeric, string, char, or cell array.');
+end
+
+if numel(vtLabelCell) ~= numel(vt)
+  error('drawimp:InvalidLabelLength', ...
+        'opts.vt_labels must have the same length as vt.');
+end
+vtLabelCell = cellfun(@(x) strtrim(char(string(x))), vtLabelCell, ...
+                     'UniformOutput', false);
+legendLabelMatrix = char(vtLabelCell);
 fimp = 'tvpvar_imp.xlsx';
 if exist(fimp, 'file') ~= 2
   fimp = fullfile('tvpvar_output', 'excel', 'tvpvar_imp.xlsx');
@@ -78,13 +102,11 @@ for i = 1 : nk
       if vax(3) * vax(4) < 0
         line([nl+1, ns+1], [0, 0], 'Color', ones(1,3)*0.6)
       end
-      if id == 1
-        vlege = '-period ahead';
-        for l = 2 : nline
-          vlege = [vlege; '-period      ']; %#ok<AGROW>
-        end
-        legend([num2str(vt') vlege], 'Location', 'best')
+      vlege = '-period ahead';
+      for l = 2 : nline
+        vlege = [vlege; '-period      ']; %#ok<AGROW>
       end
+      legend([legendLabelMatrix vlege], 'Location', 'best')
 
     else
 
@@ -98,13 +120,11 @@ for i = 1 : nk
       if vax(3) * vax(4) < 0
         line([0, nimp-1], [0, 0], 'Color', ones(1,3)*0.6)
       end
-      if id == 1
-        vlege = 't=';
-        for l = 2 : nline
-          vlege = [vlege; 't=']; %#ok<AGROW>
-        end
-        legend([vlege num2str(vt')], 'Location', 'best')
+      vlege = 't=';
+      for l = 2 : nline
+        vlege = [vlege; 't=']; %#ok<AGROW>
       end
+      legend([vlege legendLabelMatrix], 'Location', 'best')
 
     end
 
@@ -153,6 +173,7 @@ if opts.save_full || opts.save_panels
   end
 end
 end
+
 
 function figPos = get_maximized_position()
 figPos = [1 1 1920 1080];
