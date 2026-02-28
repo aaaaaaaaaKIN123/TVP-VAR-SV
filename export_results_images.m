@@ -8,7 +8,7 @@
 %%
 %%  [input]
 %%    imgdir: output directory for images (optional)
-%%            default: 'tvpvar_output/images'
+%%            default: 'tvpvar_output/image'
 %%    xlsdir: directory of Excel outputs from mcmc.m (optional)
 %%            default: 'tvpvar_output/excel'
 %%
@@ -26,7 +26,7 @@
 function files = export_results_images(imgdir, xlsdir)
 
 if nargin < 1 || isempty(imgdir)
-    imgdir = fullfile('tvpvar_output', 'images');
+    imgdir = fullfile('tvpvar_output', 'image');
 end
 if nargin < 2 || isempty(xlsdir)
     xlsdir = fullfile('tvpvar_output', 'excel');
