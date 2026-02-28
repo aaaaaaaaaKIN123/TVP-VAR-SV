@@ -20,6 +20,8 @@
 %%      .view_el        : elevation angle (default 24)
 %%      .line_width     : mesh line width (default 0.45)
 %%      .axes_font_size : axis font size (default 10)
+%%      .tick_font_size : axis tick font size (default = axes_font_size)
+%%      .label_font_size: x/y/z label font size (default = axes_font_size)
 %%      .title_font_size: panel title font size (default 11)
 %%      .colormap_name  : colormap name (default 'turbo')
 %%
@@ -124,9 +126,13 @@ for p = 1:np
   box on
   set(ax(p), 'FontSize', opts.axes_font_size);
 
-  xlabel('horizon');
-  ylabel('time');
-  zlabel('IRF');
+  ax(p).XAxis.FontSize = opts.tick_font_size;
+  ax(p).YAxis.FontSize = opts.tick_font_size;
+  ax(p).ZAxis.FontSize = opts.tick_font_size;
+
+  xlabel('horizon', 'FontSize', opts.label_font_size);
+  ylabel('time', 'FontSize', opts.label_font_size);
+  zlabel('IRF', 'FontSize', opts.label_font_size);
   if ~isempty(opts.time_labels)
     apply_time_labels(ax(p), opts.time_labels);
   end
@@ -246,6 +252,12 @@ if ~isfield(opts, 'line_width') || isempty(opts.line_width)
 end
 if ~isfield(opts, 'axes_font_size') || isempty(opts.axes_font_size)
   opts.axes_font_size = 10;
+end
+if ~isfield(opts, 'tick_font_size') || isempty(opts.tick_font_size)
+  opts.tick_font_size = opts.axes_font_size;
+end
+if ~isfield(opts, 'label_font_size') || isempty(opts.label_font_size)
+  opts.label_font_size = opts.axes_font_size;
 end
 if ~isfield(opts, 'title_font_size') || isempty(opts.title_font_size)
   opts.title_font_size = opts.axes_font_size + 1;
