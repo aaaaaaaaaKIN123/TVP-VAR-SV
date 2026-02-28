@@ -15,6 +15,7 @@
 %%     .save_full   : export full impulse figure (default 0)
 %%     .save_panels : export each subplot panel (default 0)
 %%     .outdir      : output root dir for exported images
+%%     .vt_labels   : custom labels for values in vt (default = vt)
 %%
 
 function [] = drawimp(vt, fldraw, opts)
@@ -38,6 +39,33 @@ end
 if ~isfield(opts, 'outdir') || isempty(opts.outdir)
   opts.outdir = fullfile('tvpvar_output', 'images');
 end
+if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
+  opts.vt_labels = vt;
+end
+
+if isnumeric(opts.vt_labels)
+  vtLabelCell = cellstr(num2str(opts.vt_labels(:)));
+elseif ischar(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels);
+elseif isstring(opts.vt_labels)
+  vtLabelCell = cellstr(opts.vt_labels(:));
+elseif iscell(opts.vt_labels)
+  vtLabelCell = opts.vt_labels(:);
+else
+  error('drawimp:InvalidLabelType', ...
+        'opts.vt_labels must be numeric, string, char, or cell array.');
+end
+
+if numel(vtLabelCell) ~= numel(vt)
+  error('drawimp:InvalidLabelLength', ...
+        'opts.vt_labels must have the same length as vt.');
+end
+vtLabelCell = cellfun(@(x) strtrim(char(string(x))), vtLabelCell, ...
+                     'UniformOutput', false);
+legendLabelMatrix = char(vtLabelCell);
+vtValueCell = arrayfun(@(x) sprintf('%g', x), vt(:), 'UniformOutput', false);
+periodAheadNote = build_period_ahead_note(vtValueCell);
+responseNote = build_response_note(vtValueCell, vtLabelCell);
 
 fimp = 'tvpvar_imp.xlsx';
 if exist(fimp, 'file') ~= 2
@@ -83,8 +111,9 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; '-period      ']; %#ok<AGROW>
         end
-        legend([num2str(vt') vlege], 'Location', 'best')
+        legend([legendLabelMatrix vlege], 'Location', 'best')
       end
+      add_panel_note(ax(id), periodAheadNote);
 
     else
 
@@ -103,8 +132,9 @@ for i = 1 : nk
         for l = 2 : nline
           vlege = [vlege; 't=']; %#ok<AGROW>
         end
-        legend([vlege num2str(vt')], 'Location', 'best')
+        legend([vlege legendLabelMatrix], 'Location', 'best')
       end
+      add_panel_note(ax(id), responseNote);
 
     end
 
@@ -152,6 +182,26 @@ if opts.save_full || opts.save_panels
     end
   end
 end
+end
+
+
+function note = build_period_ahead_note(vtValueCell)
+vtJoined = strjoin(vtValueCell', ',-');
+note = [vtJoined '-period ahead'];
+end
+
+function note = build_response_note(vtValueCell, vtLabelCell)
+note = ['response at t=' strjoin(vtValueCell', ',')];
+if ~isequal(vtValueCell, vtLabelCell)
+  note = [note ' (legend label: ' strjoin(vtLabelCell', ',') ')'];
+end
+end
+
+function add_panel_note(ax, note)
+text(ax, 0.01, 0.99, note, 'Units', 'normalized', ...
+     'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
+     'FontSize', 8, 'Color', [0.2 0.2 0.2], ...
+     'BackgroundColor', [1 1 1], 'Margin', 1, 'Clipping', 'on');
 end
 
 function figPos = get_maximized_position()
