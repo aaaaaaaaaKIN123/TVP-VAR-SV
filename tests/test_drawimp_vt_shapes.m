@@ -51,9 +51,9 @@ for fldraw = 0:1
     verifyNumElements(testCase, legends, 1);
     labels = strtrim(cellstr(legends(1).String));
     if fldraw == 1
-      expectedLabels = {'early-period ahead'; 'late-period'};
+      expectedLabels = {'early-period ahead', 'late-period'};
     else
-      expectedLabels = {'t=early'; 't=late'};
+      expectedLabels = {'t=early', 't=late'};
     end
     verifyEqual(testCase, labels, expectedLabels);
     clear closeFigure
