@@ -45,9 +45,6 @@ end
 if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
   opts.vt_labels = vt;
 end
-if ~isfield(opts, 'vt_labels') || isempty(opts.vt_labels)
-  opts.vt_labels = vt;
-end
 if ~isfield(opts, 'axes_font_size') || isempty(opts.axes_font_size)
   opts.axes_font_size = 12;
 end
@@ -94,7 +91,7 @@ mimpm = mimpr(3:end, 3:end);
 nimp = fix(size(mimpm, 1) / m_ns);
 mline = [0 .5 0; 0 0 1; 1 0 0; 0 .7 .7];
 vline = {':', '--', '-', '-.'};
-nline = size(vt, 2);
+nline = numel(vt); % count selected values for row or column vectors
 
 figPos = get_maximized_position();
 fig = figure('Color', 'w', 'Units', 'pixels', 'Position', figPos);
