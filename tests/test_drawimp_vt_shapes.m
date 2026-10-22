@@ -50,17 +50,12 @@ for fldraw = 0:1
     legends = findall(fig, 'Type', 'legend');
     verifyNumElements(testCase, legends, 1);
     labels = strtrim(cellstr(legends(1).String));
-    verifyEqual(testCase, numel(labels), 4);
-
     if fldraw == 1
-      verifyTrue(testCase, any(strcmp(labels, 'early')));
-      verifyTrue(testCase, any(strcmp(labels, 'late')));
-      verifyTrue(testCase, any(strcmp(labels, '-period ahead')));
-      verifyTrue(testCase, any(strcmp(labels, '-period')));
+      expectedLabels = {'early-period ahead'; 'late-period'};
     else
-      verifyTrue(testCase, any(strcmp(labels, 't=early')));
-      verifyTrue(testCase, any(strcmp(labels, 't=late')));
+      expectedLabels = {'t=early'; 't=late'};
     end
+    verifyEqual(testCase, labels, expectedLabels);
     clear closeFigure
   end
 end
